@@ -13,5 +13,13 @@
   .b-r {
     border-right: 1px solid white;
   }
+  .item-cell {
+    border: 1px solid white;
+    max-width: 50px !important;
+  }
+  .item-th{
+    border: 1px solid white;
+    max-width: 70px !important;
+  }
 
 </style>
