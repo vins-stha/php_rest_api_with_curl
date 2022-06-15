@@ -5,7 +5,7 @@ class ApiCall
 {
   const  BASEURL = "http://internal1.easproject.com/api/";
   const AUTHURL = "https://internal1.easproject.com/api/auth/open-id/connect?client_id=%5B123213%5D-1b1e2aa8fb50e43dd20429afdbbec1b81b153853&client_secret=bc921891ad907d3ba443ad707962ab140295&grant_type=client_credentials";
-
+  const MAXUPLOAD= 52428800;
   // url to be called for
   private $curlURL = "";
   // data to be sent

@@ -20,8 +20,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
   $accesstoken = trim($result['access_token']);
 
+  if (isset($_FILES['file']['tmp_name']) && (filesize($_FILES['file']['tmp_name']) <= ApiCall::MAXUPLOAD) ) {
 
-  if (isset($_FILES['file']['tmp_name'])) {
 
     $cfile = new CURLFile($_FILES['file']['tmp_name'], $_FILES['file']['type'], $_FILES['file']['name']);
     $data = array("file" => $cfile);
@@ -33,20 +33,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     $uploadCurl->setCurlToken($accesstoken);
 
     $result = $uploadCurl->createCURLRequest();
-
+//
     $_SESSION['access_token'] = $accesstoken;
     $_SESSION['job_id'] = $result['job_id'];
 
+
+    var_dump($_SESSION);
     if (!empty($result) && $result['job_id'] !== null)
-     header("Location: /eas/results.php");
+      header("Location: /eas/results.php");
   }
 
 }
 
 
 ?>
-
-<h2>PHP Form Example: GFG Review</h2>
+<script>
+  localStorage.setItem('refreshed', false);
+</script>
+<h2>Upload JSON file to proceed</h2>
 <form method="post" action=
 "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
   Name:

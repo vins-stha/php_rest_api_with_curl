@@ -4,16 +4,26 @@ include("Components/ApiCall.php");
 include("Components/OrderResponse.php");
 include("template.php");
 
-$_SESSION['access_token'] = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJYUWp2dGk4aDNQZEpJUXlGMVI5OWFBWGtEWjV6bHFTWGdUTFMwNG02bzc4In0.eyJleHAiOjE2NTUzMDU4NjMsImlhdCI6MTY1NTMwMjI2MywianRpIjoiMTk5ZjhhYWItMzRhNC00M2FhLTkyN2QtNjQxMTBjNzY2MDQxIiwiaXNzIjoiaHR0cHM6Ly9pZC1kZXYuZWFzcHJvamVjdC5jb20vYXV0aC9yZWFsbXMvbWFzdGVyIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjJjZWU3MTg4LThlY2EtNDEyZC1hZTNlLWM1NWFkNzQzMzU4MSIsInR5cCI6IkJlYXJlciIsImF6cCI6IlsxMjMyMTNdLTFiMWUyYWE4ZmI1MGU0M2RkMjA0MjlhZmRiYmVjMWI4MWIxNTM4NTMiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vaW5mb0BlYXNwcm9qZWN0LmNvbSJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7IlsxMjMyMTNdLTFiMWUyYWE4ZmI1MGU0M2RkMjA0MjlhZmRiYmVjMWI4MWIxNTM4NTMiOnsicm9sZXMiOlsidW1hX3Byb3RlY3Rpb24iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiY2xpZW50SG9zdCI6IjEwLjMyLjAuNTYiLCJjbGllbnRJZCI6IlsxMjMyMTNdLTFiMWUyYWE4ZmI1MGU0M2RkMjA0MjlhZmRiYmVjMWI4MWIxNTM4NTMiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtWzEyMzIxM10tMWIxZTJhYThmYjUwZTQzZGQyMDQyOWFmZGJiZWMxYjgxYjE1Mzg1MyIsImNsaWVudEFkZHJlc3MiOiIxMC4zMi4wLjU2In0.qiKSRlhOFvzeWLMYLiNAaJSfdcq4TWKYKc5uRYiTFcnNg5MxfOlIx9tfremmPa1NOAPFiwNoWd1nUUVN7qIfHIwLYU5re69ARaGx9MHheJPbY8FfHqxECNOdCR3wYd-t6Up-Fxx21uQShMkoK6r8ntl2Ilye1B-GK7gWL7MrvYDwEI6q2Wa1jHaqF10bWqsFR0cBGHn8mhwi_aXV5BYEZ1bThLTFz1HJs2CTonS7s3Dzi0j1JGBeKsHooKP3UGUtl8j14017Ucsgejd9fd9aIapS4pvor1NJ_fPhr9AgYXDgWXbM8pk4YbhkXBGylvwWwtpEzjkwy1Ie0PhVwCLMqA";
-    $curlUrl = ApiCall::BASEURL . "mass-sale/get_mass_post_sale_order_status/1174";//.$_SESSION['job_id'];
+$curlUrl = ApiCall::BASEURL . "mass-sale/get_mass_post_sale_order_status/".$_SESSION['job_id'];
 $mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, $_SESSION['access_token']);
 $result = $mass_sale_curl->createCurlRequest();
-
 ?>
+<script>
+  window.onload = function () {
 
+    if (localStorage.getItem('refreshed') == "false" ) {
+
+      localStorage.setItem('refreshed', true);
+      window.location=window.location.href
+      window.location=window.location.href
+
+    }
+  }
+
+</script>
 
 <body>
-
+<h2>ORDER table</h2>
   <table class="table table-hover table-dark table-striped">
     <thead>
     <tr>
