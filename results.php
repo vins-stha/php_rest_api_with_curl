@@ -4,23 +4,11 @@ include("Components/ApiCall.php");
 include("Components/OrderResponse.php");
 include("template.php");
 
-$curlUrl = ApiCall::BASEURL . "mass-sale/get_mass_post_sale_order_status/".$_SESSION['job_id'];
-$mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, $_SESSION['access_token']);
-$result = $mass_sale_curl->createCurlRequest();
+$result = $_SESSION['order_data'];
+session_destroy();
+
 ?>
-<script>
-  window.onload = function () {
 
-    if (localStorage.getItem('refreshed') == "false" ) {
-
-      localStorage.setItem('refreshed', true);
-      window.location=window.location.href
-      window.location=window.location.href
-
-    }
-  }
-
-</script>
 
 <body>
 <h2>ORDER table</h2>
