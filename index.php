@@ -34,16 +34,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
     $result = $uploadCurl->createCURLRequest();
 
-
-    $curlUrl = ApiCall::BASEURL . "mass-sale/get_mass_post_sale_order_status/1173";//.$result['job_id'];
+    $curlUrl = ApiCall::BASEURL . "mass-sale/get_mass_post_sale_order_status/".$result['job_id'];
     $mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, $_SESSION['access_token']);
     $result = $mass_sale_curl->createCurlRequest();
 
+    $str = "Cannot return order response list, Mass post sale job: ".$result['job_id']. " is still pending.";
+
+    while (strcmp($result['message'], $str) == 0)
+    {
+      $mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, $_SESSION['access_token']);
+      $result = $mass_sale_curl->createCurlRequest();
+    }
     $_SESSION['access_token'] = $accesstoken;
     $_SESSION['job_id'] = $result['job_id'];
-
     $_SESSION['order_data'] = $result;
-    sleep(1);
+
     if (!empty($result) && $result['job_id'] !== null)
       header("Location: /eas/results.php");
 

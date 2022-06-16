@@ -5,13 +5,12 @@ include("Components/OrderResponse.php");
 include("template.php");
 
 $result = $_SESSION['order_data'];
-session_destroy();
 
 ?>
 
 
 <body>
-<h2>ORDER table</h2>
+<h2>ORDER table for job id <?= $_SESSION['job_id']?></h2>
   <table class="table table-hover table-dark table-striped">
     <thead>
     <tr>
