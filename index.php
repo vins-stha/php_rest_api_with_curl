@@ -51,7 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
     if (!empty($result) && $result['job_id'] !== null)
       header("Location: /eas/results.php");
-
   }
 
 }
