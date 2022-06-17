@@ -40,27 +40,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
       $result = $uploadCurl->createCURLRequest();
 
-      var_dump($result);
-
-//      $curlUrl = ApiCall::BASEURL . "mass-sale/get_mass_post_sale_order_status/" . $result['job_id'];
-//      $mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, $accesstoken);
-//      $result = $mass_sale_curl->createCurlRequest();
-//
-//      $str = "Cannot return order response list, Mass post sale job: " . $result['job_id'] . " is still pending.";
-//
-//      while (strcmp($result['message'], $str) == 0) {
-//        $mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, $accesstoken);
-//        $result = $mass_sale_curl->createCurlRequest();
-//      }
-//      $_SESSION['access_token'] = $accesstoken;
-//      $_SESSION['job_id'] = $result['job_id'];
-//      $_SESSION['order_data'] = $result;
+      if( array_key_exists('code', $result))
+      {
+        throw new RuntimeException($result['code']. "! ". $result['message']);
+      }
 
       if (!empty($result) && $result['job_id'] !== null)
-        header("Location: /eas/results?job_id=".$result['job_id'] );
+        header("Location: /eas/results?job_id=" . $result['job_id']);
 
-    }
-    else {
+    } else {
       throw new RuntimeException('Invalid parameters. File type allowed: json');
     }
   } catch (RuntimeException $exception) {
