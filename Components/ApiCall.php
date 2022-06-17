@@ -129,4 +129,21 @@ class ApiCall
     return (json_decode($response, true));
   }
 
+  public static function generateCurlToken(){
+    $apiCall = new ApiCall(self::authurl(), $method = "POST", null, null);
+
+    $result = $apiCall->createCurlRequest();
+
+    $accesstoken = trim($result['access_token']);
+
+    return $accesstoken;
+
+  }
+
+  public static function isJobPending($result){
+    $str = "Cannot return order response list, Mass post sale job: " . $result['job_id'] . " is still pending.";
+
+    return (array_key_exists('message', $result) && (strcmp($result['message'], $str) == 0)) ? true : false;
+  }
+
 }

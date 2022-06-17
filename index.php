@@ -14,11 +14,11 @@ include("Components/ApiCall.php");
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
-  $apiCall = new ApiCall(\ApiCall::authurl(), $method = "POST", null, null);
+//  $apiCall = new ApiCall(\ApiCall::authurl(), $method = "POST", null, null);
+//
+//  $result = $apiCall->createCurlRequest();
 
-  $result = $apiCall->createCurlRequest();
-
-  $accesstoken = trim($result['access_token']);
+  $accesstoken = ApiCall::generateCurlToken();
   $array = explode('.', $_FILES['file']['name']);
   $extension = end($array);
 
@@ -40,22 +40,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
       $result = $uploadCurl->createCURLRequest();
 
-      $curlUrl = ApiCall::BASEURL . "mass-sale/get_mass_post_sale_order_status/" . $result['job_id'];
-      $mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, $accesstoken);
-      $result = $mass_sale_curl->createCurlRequest();
+      var_dump($result);
 
-      $str = "Cannot return order response list, Mass post sale job: " . $result['job_id'] . " is still pending.";
-
-      while (strcmp($result['message'], $str) == 0) {
-        $mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, $accesstoken);
-        $result = $mass_sale_curl->createCurlRequest();
-      }
-      $_SESSION['access_token'] = $accesstoken;
-      $_SESSION['job_id'] = $result['job_id'];
-      $_SESSION['order_data'] = $result;
+//      $curlUrl = ApiCall::BASEURL . "mass-sale/get_mass_post_sale_order_status/" . $result['job_id'];
+//      $mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, $accesstoken);
+//      $result = $mass_sale_curl->createCurlRequest();
+//
+//      $str = "Cannot return order response list, Mass post sale job: " . $result['job_id'] . " is still pending.";
+//
+//      while (strcmp($result['message'], $str) == 0) {
+//        $mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, $accesstoken);
+//        $result = $mass_sale_curl->createCurlRequest();
+//      }
+//      $_SESSION['access_token'] = $accesstoken;
+//      $_SESSION['job_id'] = $result['job_id'];
+//      $_SESSION['order_data'] = $result;
 
       if (!empty($result) && $result['job_id'] !== null)
-        header("Location: /eas/results.php");
+        header("Location: /eas/results?job_id=".$result['job_id'] );
 
     }
     else {
@@ -75,9 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 <h2>Upload JSON file to proceed</h2>
 <form method="post" action=
 "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
-  Name:
-  <input type="text" name="name"/>
-  <br>
+
   <br>
   JSON:
   <input type="file" name="file">

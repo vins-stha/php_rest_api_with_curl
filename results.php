@@ -4,43 +4,63 @@ include("Components/ApiCall.php");
 include("Components/OrderResponse.php");
 include("template.php");
 
-$result = $_SESSION['order_data'];
+$id = $_GET['job_id'];
+
+$curlUrl = ApiCall::BASEURL . "mass-sale/get_mass_post_sale_order_status/" . $id;
+
+$mass_sale_curl = new ApiCall($curlUrl, $method = "GET", null, ApiCall::generateCurlToken());
+$result = $mass_sale_curl->createCurlRequest();
 
 ?>
 
-
 <body>
-<h2>ORDER table for job id <?= $_SESSION['job_id']?></h2>
-  <table class="table table-hover table-dark table-striped">
-    <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">External order id</th>
-      <th scope="col">Status</th>
-      <th scope="col">Error/Message</th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php
-    $count = 1;
-    if (array_key_exists('order_response_list', $result)) :
+<h2>ORDER table for job id <?= $id ?></h2>
+<?php if (
+    array_key_exists('code', $result)
+    && ($result['code'] == 400
+        || $result['code'] == 404)
 
-      foreach ($result['order_response_list'] as $external_order) :
-        ?>
+): ?>
+  <h2 class="danger"> <?= $result['code'] . "! " . $result['message'] ?></h2>
+<?php else: ?>
 
-        <tr>
-          <td scope="row"><?= $count++; ?></td>
-          <td><?= $external_order['external_order_id']; ?></td>
-          <td><?= $external_order['status']; ?></td>
-          <td><?= wordwrap($external_order['error']['message'], 30); ?></td>
-        </tr>
+  <?php if (ApiCall::isJobPending($result)): ?>
+    <h2> <?= $result['message'] . "\nPlease reload the page or try again later." ?></h2>
+  <?php else: ?>
+    <table class="table table-hover table-dark table-striped">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">External order id</th>
+        <th scope="col">Status</th>
+        <th scope="col">Error/Message</th>
+      </tr>
+      </thead>
+      <tbody>
+      <?php
+      $count = 1;
+      if (array_key_exists('order_response_list', $result)
+          && count($result['order_response_list']) > 0) :
 
-       <?php endforeach; endif; ?>
+        foreach ($result['order_response_list'] as $external_order) :
+          ?>
 
-    </tbody>
-  </table>
+          <tr>
+            <td scope="row"><?= $count++; ?></td>
+            <td><?= $external_order['external_order_id']; ?></td>
+            <td><?= $external_order['status']; ?></td>
+            <td><?= wordwrap($external_order['error']['message'], 30); ?></td>
+          </tr>
 
-<h2>Detailed table</h2>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <h2> Error loading order status. Please try again later or refresh the page to proceed </h2>
+      <?php endif; ?>
+
+      </tbody>
+    </table>
+
+    <h2>Detailed table</h2>
     <table class="table table-hover table-dark table-striped table-bordered">
       <thead>
       <tr>
@@ -65,56 +85,58 @@ $result = $_SESSION['order_data'];
 
 
       <?php
-      if(array_key_exists('order_response_list',$result)):
-      foreach($result['order_response_list'] as $external_order):
+      if (array_key_exists('order_response_list', $result)):
+        foreach ($result['order_response_list'] as $external_order):
 
-      if (array_key_exists('checkout_token', $external_order)):
-        $order_items_object = OrderResponseList::retrieveObjectFromToken($external_order['checkout_token']);
-        $order_items = $order_items_object->items;
-        $i = 0;
-        ?>
-        <tr>
+          if (array_key_exists('checkout_token', $external_order)):
+            $order_items_object = OrderResponseList::retrieveObjectFromToken($external_order['checkout_token']);
+            $order_items = $order_items_object->items;
+            $i = 0;
+            ?>
+            <tr>
 
-          <td><?= $external_order['external_order_id']; ?></td>
+              <td><?= $external_order['external_order_id']; ?></td>
 
-          <td><?= $order_items_object->id; ?></td>
-          <td><?= $order_items_object->total_order_amount; ?></td>
-          <td><?= $order_items_object->taxes_and_duties; ?></td>
-          <td><?= $order_items_object->merchandise_cost_vat_excl; ?></td>
-          <td><?= $order_items_object->delivery_charge_vat_excl; ?></td>
-          <td><?= $order_items_object->eas_fee; ?></td>
-          <td><?= $order_items_object->delivery_country; ?></td>
-          <td><?= $order_items_object->payment_currency; ?></td>
+              <td><?= $order_items_object->id; ?></td>
+              <td><?= $order_items_object->total_order_amount; ?></td>
+              <td><?= $order_items_object->taxes_and_duties; ?></td>
+              <td><?= $order_items_object->merchandise_cost_vat_excl; ?></td>
+              <td><?= $order_items_object->delivery_charge_vat_excl; ?></td>
+              <td><?= $order_items_object->eas_fee; ?></td>
+              <td><?= $order_items_object->delivery_country; ?></td>
+              <td><?= $order_items_object->payment_currency; ?></td>
 
-          <td>
-            <table class="table-striped table-bordered">
-              <?php if (!empty($order_items)): ?>
-                <tr>
-                  <th scope="col">item_id</th>
-                  <th scope="col">quantity</th>
-                  <th scope="col">unit_cost_excl_vat</th>
-                  <th scope="col">item_duties_and_taxes</th>
-                  <th scope="col">vat_rate</th>
-                </tr>
-                <?php foreach ($order_items as $item): ?>
-                  <tr>
-                    <td><?= $item->item_id; ?></td>
-                    <td><?= $item->quantity; ?></td>
-                    <td><?= $item->unit_cost_excl_vat; ?></td>
-                    <td><?= $item->item_duties_and_taxes; ?></td>
-                    <td><?= $item->vat_rate; ?></td>
-                  </tr>
-                <?php endforeach; endif;// $order_items
-              ?>
-            </table>
-          </td>
+              <td>
+                <table class="table-striped table-bordered">
+                  <?php if (!empty($order_items)): ?>
+                    <tr>
+                      <th scope="col">item_id</th>
+                      <th scope="col">quantity</th>
+                      <th scope="col">unit_cost_excl_vat</th>
+                      <th scope="col">item_duties_and_taxes</th>
+                      <th scope="col">vat_rate</th>
+                    </tr>
+                    <?php foreach ($order_items as $item): ?>
+                      <tr>
+                        <td><?= $item->item_id; ?></td>
+                        <td><?= $item->quantity; ?></td>
+                        <td><?= $item->unit_cost_excl_vat; ?></td>
+                        <td><?= $item->item_duties_and_taxes; ?></td>
+                        <td><?= $item->vat_rate; ?></td>
+                      </tr>
+                    <?php endforeach; endif;// $order_items
+                  ?>
+                </table>
+              </td>
 
-        </tr>
+            </tr>
 
-      <?php endif; endforeach; endif;//$result['order_response_list'] ?>
+          <?php endif; endforeach; endif;//$result['order_response_list'] ?>
 
       </tbody>
     </table>
 
+  <?php endif; ?>
 
+<?php endif; ?>
 </body>
