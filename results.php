@@ -26,6 +26,7 @@ $result = $mass_sale_curl->createCurlRequest();
 
   <?php if (ApiCall::isJobPending($result)): ?>
     <h2> <?= $result['message'] . "\nPlease reload the page or try again later." ?></h2>
+  <?php header("refresh: 3"); ?>
   <?php else: ?>
     <table class="table table-hover table-dark table-striped">
       <thead>

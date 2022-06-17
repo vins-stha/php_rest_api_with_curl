@@ -40,9 +40,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
       $result = $uploadCurl->createCURLRequest();
 
-      if( array_key_exists('code', $result))
-      {
-        throw new RuntimeException($result['code']. "! ". $result['message']);
+      if (is_array($result) && array_key_exists('code', $result)) {
+        throw new RuntimeException($result['code'] . "! " . $result['message']);
       }
 
       if (!empty($result) && $result['job_id'] !== null)
