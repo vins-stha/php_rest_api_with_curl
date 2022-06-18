@@ -3,7 +3,6 @@ session_start();
 include("Components/ApiCall.php");
 ?>
 
-
 <!DOCTYPE html>
 <html>
 
@@ -13,10 +12,6 @@ include("Components/ApiCall.php");
 <body>
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
-
-//  $apiCall = new ApiCall(\ApiCall::authurl(), $method = "POST", null, null);
-//
-//  $result = $apiCall->createCurlRequest();
 
   $accesstoken = ApiCall::generateCurlToken();
   $array = explode('.', $_FILES['file']['name']);
@@ -34,11 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
       $uploadUrl = ApiCall::BASEURL . "mass-sale/create_mass_post_sale_orders";
 
-      $uploadCurl = new ApiCall($uploadUrl, $method = "POST", $data, $accesstoken);
+      $uploadCurl = new ApiCall($uploadUrl, $method = "POST", $data);
 
       $uploadCurl->setCurlToken($accesstoken);
 
-      $result = $uploadCurl->createCURLRequest();
+      $result = $uploadCurl->createCURLRequest($accesstoken);
 
       if (is_array($result) && array_key_exists('code', $result)) {
         throw new RuntimeException($result['code'] . "! " . $result['message']);

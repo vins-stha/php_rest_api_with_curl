@@ -17,11 +17,10 @@ class ApiCall
 
   private $curl;
 
-  function __construct($curlURL, $curlMethod, $curlData, $curlToken)
+  function __construct($curlURL, $curlMethod, $curlData)
   {
     $this->curlData = $curlData;
     $this->curlMethod = $curlMethod;
-    $this->curlToken = $curlToken;
     $this->curlURL = $curlURL;
     $this->curl = curl_init();
   }
@@ -100,12 +99,12 @@ class ApiCall
     return self::BASEURL;
   }
 
-  public function createCURLRequest()
+  public function createCURLRequest($accesstoken)
   {
     $curl = $this->curl;
     $headers = array(
         'Content-Type: multipart/form-data',
-        "Authorization: Bearer $this->curlToken",
+        "Authorization: Bearer $accesstoken",
         "Accept: application/json"
     );
     curl_setopt($curl, CURLOPT_URL, $this->curlURL);
@@ -129,10 +128,14 @@ class ApiCall
     return (json_decode($response, true));
   }
 
+  /**
+   * @return string
+   *
+   */
   public static function generateCurlToken(){
     $apiCall = new ApiCall(self::authurl(), $method = "POST", null, null);
 
-    $result = $apiCall->createCurlRequest();
+    $result = $apiCall->createCurlRequest(null);
 
     $accesstoken = trim($result['access_token']);
 
@@ -140,10 +143,22 @@ class ApiCall
 
   }
 
-  public static function isJobPending($result){
-    $str = "Cannot return order response list, Mass post sale job: " . $result['job_id'] . " is still pending.";
+  /**
+   * @param $result
+   * @return bool
+   *
+   */
 
-    return (array_key_exists('message', $result) && (strcmp($result['message'], $str) == 0)) ? true : false;
+  public static function isJobPending($result){
+
+    if (is_array($result) && array_key_exists('job_id', $result))
+    {
+      $str = "Cannot return order response list, Mass post sale job: " . $result['job_id'] . " is still pending.";
+
+      return (array_key_exists('message', $result) && (strcmp($result['message'], $str) == 0)) ? true : false;
+    }
+    return false;
+
   }
 
 }
